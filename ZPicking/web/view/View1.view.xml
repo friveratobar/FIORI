@@ -1,0 +1,320 @@
+<mvc:View controllerName="App00810ZpickingRecep.App00810ZpickingRecep.controller.View1" xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m" xmlns:uit="sap.ui.table" xmlns:dnd="sap.ui.core.dnd" xmlns:l="sap.ui.layout"
+	xmlns:unified="sap.ui.unified" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core">
+	<Shell id="shell">
+		<App id="idAppControl">
+			<pages>
+				<Page title="{i18n>title}">
+					<content>
+						<f:Form id="FormChange356" editable="true">
+							<f:title>
+								<core:Title text="Seleccione tipo de Recepción"/>
+							</f:title>
+							<f:layout>
+								<f:ResponsiveGridLayout labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4"
+									emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer>
+									<f:formElements>
+										  <f:FormElement>
+											<f:fields>
+												<RadioButton select="irImport" id="idImport" text="Recepción de Importación" selected="true"/>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement>
+											<f:fields>
+												<RadioButton select="irTraslado" id="idTraslado" text="Recepción de Traslados"/>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
+						<f:Form id="FormChange354" editable="true">
+							<f:title>
+								<core:Title text="Ingresar Parámetros de Selección"/>
+							</f:title>
+							<f:layout>
+								<f:ResponsiveGridLayout labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4"
+									emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
+							</f:layout>
+							<f:formContainers>
+								<f:FormContainer>
+									<f:formElements>
+										<f:FormElement id="elemVariable" label="Entrega Entrante">
+											<f:fields>
+												<Input value="" id="idInputPto" placeholder="Ingrese una entrega..." showValueHelp="false" type="Number" liveChange="onValidaEntrega2" submit="onValidaEntrega2">
+													<layoutData>
+														<l:GridData span="XL4 L4 M4 S10"/>
+													</layoutData>
+												</Input>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Centro">
+											<f:fields>
+												<ComboBox placeholder="Seleccione Centro" id="idCENTRO" selectedKey="{/GT_CENTRO/WERKS}"
+													items="{path: '/GT_CENTRO',sorter: { path: 'WERKS' }}" selectionChange="onBuscarAlmacen">
+													<core:Item key="{WERKS}" text="{WERKS} - {NAME1}"/>
+												</ComboBox>
+											</f:fields>
+										</f:FormElement>
+										<f:FormElement label="Almacén">
+											<f:fields>
+												<ComboBox placeholder="Seleccione Almacen" id="idALMACEN" selectedKey="{/GT_ALMACEN/WERKS}"
+													items="{path: '/GT_ALMACEN',sorter: { path: 'WERKS' }}">
+													<core:Item key="{WERKS}" text="{LGORT} - {LGOBE}"/>
+												</ComboBox>
+											</f:fields>
+										</f:FormElement>
+									</f:formElements>
+								</f:FormContainer>
+							</f:formContainers>
+						</f:Form>
+						<BusyDialog id="bd" title="Por favor espere..." text="" close="onCloseBusyDialog"/>
+						<!-- INI Dialog -->
+						<Dialog id="idDialogEnt" visible="false" state="Success" icon="sap-icon://shipping-status" class="sapContrast sapContrastPlus"
+							title="Picking" contentWidth="100%" contentHeight="100%" afterOpen="onDialogAfterOpen">
+							<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+								<headerToolbar>
+									<Toolbar height="3rem">
+										<Title id="idPanelTitle2" text=""/>
+									</Toolbar>
+								</headerToolbar>								
+								<content>
+									<Input class="myClass" value="" submit="onPickMaterial" visible="false" id="idInputHidden" placeholder="Scan Neumático..."/>
+									<ProgressIndicator visible="false" id="idPB" percentValue="{modelData>/porcentaje}"
+										displayValue="{modelData>/cantidadConteo}/{modelData>/cantidad}" showValue="true" state="{modelData>/estado}"/>
+									<Toolbar>
+										<ToolbarSpacer/>
+										<ToolbarSpacer/>
+										<Button text="Confirmar" type="Emphasized" icon="sap-icon://supplier"  press="esConfirmacion"/>
+									</Toolbar>
+									<List id="idList" visible="false" footerText="This is the footer text"
+										items="{ path: 'entModel>/results', sorter: { path: 'entModel>fecha', descending: false, group: true }, groupHeaderFactory: '.getGroupHeader' }">
+										<headerToolbar>
+											<OverflowToolbar>
+												<Title text="Entregas"/>
+												<ToolbarSpacer/>
+												<ToggleButton icon="sap-icon://menu" tooltip="Enable / Disable Custom Context Menu" press="onToggleContextMenu"/>
+											</OverflowToolbar>
+										</headerToolbar>
+										<StandardListItem title="{entModel>entrega}" description="{entModel>nombreCliente}" icon="{ProductPicUrl}" iconDensityAware="false"
+											iconInset="false"/>
+									</List>
+									<f:Form id="idFormMaterial" visible="true" editable="false" >
+										<f:title visible="false">
+										
+										</f:title>
+										<f:layout>
+											<f:ResponsiveGridLayout labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4"
+												emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
+										</f:layout>
+										<f:formContainers>
+											<f:FormContainer>
+												<f:formElements>
+												<!--	<f:FormElement label="Estado">
+														<f:fields>
+															<ObjectStatus id="idEstadoScan" class="sapUiSmallMarginBottom"/>
+														</f:fields> 
+													</f:FormElement> -->
+													<f:FormElement label="Nº Pieza" visible="false">
+														<f:fields>
+															<Text text="" id="idPieza"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Código SAP">
+														<f:fields>
+															<Text text="" id="idMaterial"/>
+															<ProgressIndicator id="idCtdConteo" percentValue="0" displayValue="" showValue="true" state="Error"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Texto Breve" visible="false">
+														<f:fields>
+															<Text text="" id="idTextoBreve"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Tipo Material" visible="false">
+														<f:fields>
+															<Text text="" id="idTipoMaterial"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Creado Por" visible="false">
+														<f:fields>
+															<Text text="" id="idCreadoPor"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="CTD" visible="false">
+														<f:fields>
+															<Text text="" id="idCtd"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="CTD CONTEO" visible="false">
+														<f:fields>
+															<ProgressIndicator id="idCtdConteo22" percentValue="0" displayValue="" showValue="true" state="Error"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="UMB" visible="false">
+														<f:fields>
+															<Text text="" id="idUnidad"/>
+														</f:fields>
+													</f:FormElement>
+												</f:formElements>
+											</f:FormContainer>
+										</f:formContainers>
+									</f:Form>
+										<Table id="idTablaMateriales" visible="true"
+										items="{path: '/Materiales', groupHeaderFactory: '.getGroupHeader'}"
+										class="sapContrast sapContrastPlus"  width="100%" noDataText="Sin Datos" mode="None" showSeparators="All" growing="true"
+										growingThreshold="20" growingScrollToLoad="true">
+										<columns>
+											<Column width="10%" visible="true">
+												<Text text="Material"/>
+											</Column>
+											<Column width="8%" visible="false">
+												<Text text="Cant"/>
+											</Column>
+											<Column width="8%" visible="false">
+												<Text text="Pick"/>
+											</Column>
+											<Column width="8%" visible="true">
+												<Text text="Progreso"/>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem visible="{path: 'LFIMG' , formatter : '.visibleColumna'}">
+												<cells> 
+													<ObjectStatus class="sapUiSmallMarginBottom" state="{path : 'EAN11' , formatter : '.estadoMaterial'}"  text="{path : 'MATNR' , formatter : '.formatCero'} - {ARKTX}"/>
+													<ObjectStatus class="sapUiSmallMarginBottom" text="{LFIMG}"/>
+													<ObjectStatus class="sapUiSmallMarginBottom" text="{PIKMG}"/>
+                                                    <!-- <ObjectStatus class="sapUiSmallMarginBottom" text="{LFIMG}/{PIKMG}"/> @frivera -->
+                                                    <ProgressIndicator id="idPBTablaMat" percentValue="{PERCENT}" displayValue="{PIKMG} / {LFIMG}" showValue="true" state="{STATE}"/>
+												</cells>
+											</ColumnListItem>
+										</items>
+									</Table>
+									
+								</content>
+							</Panel>
+							<beginButton>
+								<Button text="Incidente" icon="sap-icon://add" type="Emphasized" press="abrirIncidente"/>
+							</beginButton>
+							<endButton>
+								<Button text="Cerrar" type="Emphasized" press="onCerrarDialog"/>
+							</endButton>
+						</Dialog>
+						<Dialog id="idDialogScan" visible="false" state="Success" icon="sap-icon://shipping-status" class="sapContrast sapContrastPlus"
+							title="Listado Entregas" contentWidth="80%" contentHeight="80%">
+							<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+								<content></content>
+							</Panel>
+							<endButton>
+								<Button text="Cerrar" type="Emphasized" press="onCerrarDialog"/>
+							</endButton>
+						</Dialog>
+						<Dialog id="idDialogAccidente" visible="false" state="Success" icon="sap-icon://shipping-status" class="sapContrast sapContrastPlus"
+							title="Crear Incidente" contentWidth="50%" contentHeight="80%">
+							<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+								<headerToolbar>
+									<Toolbar height="3rem">
+										<Title id="idPanelTitle" text=""/>
+									</Toolbar>
+								</headerToolbar>
+								<content>
+									<f:Form id="FormDDATOSGEN" editable="false">
+										<f:title>
+											<core:Title text="Formulario de inicidente"/>
+										</f:title>
+										<f:layout>
+											<f:ResponsiveGridLayout labelSpanXL="4" labelSpanL="3" labelSpanM="4" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="0" emptySpanL="4"
+												emptySpanM="0" emptySpanS="0" columnsXL="2" columnsL="1" columnsM="1" singleContainerFullSize="false"/>
+										</f:layout>
+										<f:formContainers>
+											<f:FormContainer title="">
+												<f:formElements>
+												
+														<f:FormElement label="Código SAP">
+														<f:fields>
+															<!--<Input valueLiveUpdate="true" value="{/OBJINCIDENCIA/VBELN}" editable="true" showValueHelp="false"/> -->
+															<Input id="inpVbeln" value="" editable="true" showValueHelp="false"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Material">
+														<f:fields>
+															<Input id="inpMatnr" value="" editable="true"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Descripción">
+														<f:fields>
+															<!--<Input valueLiveUpdate="true" value="{/OBJINCIDENCIA/ACCION}" editable="true"/> -->
+															<Input id="inpAccion" value="" editable="true"/>
+														</f:fields>
+													</f:FormElement>
+													<!--<f:FormElement label="Caja">-->
+													<!--	<f:fields>-->
+													<!--		<Input id="idPatente" valueLiveUpdate="true" value="{/OBJINCIDENCIA/CANT_TEO}" editable="true"/>-->
+													<!--	</f:fields>-->
+													<!--</f:FormElement>-->
+													<f:FormElement label="Cant. Teórica">
+														<f:fields>
+															<!--<Input id="nombreChofer" valueLiveUpdate="true" value="{/OBJINCIDENCIA/CANT_TEO}" editable="true"/>-->
+															<Input id="inpCantTeorica" value="" editable="true"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Cant. Real">
+														<f:fields>
+															<!--<Input valueLiveUpdate="true" id="idTel"
+																value="{path: '/OBJINCIDENCIA/CANT_REAL', formatter: 'zpptrackcdzpp_trackcd.controller.Formatter.formatCelular'}" editable="true"/>-->
+														    <Input id="inpCantReal" value="" editable="true"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Motivo">
+														<f:fields>
+															<!--<Input valueLiveUpdate="true"  value="{/ListTransPort/CtdOcCamion}" editable="false"/> -->
+															<!--<Input valueLiveUpdate="true" value="{/OBJINCIDENCIA/MOTIVO}" editable="true"/>-->
+															<Input id="inpMotivo" value="" editable="true"/>
+														</f:fields>
+													</f:FormElement>
+													<f:FormElement label="Detalle">
+														<f:fields>
+														   <!-- <Input valueLiveUpdate="true" valueState="Error" valueStateText="Obligatorio" value="{/OBJINCIDENCIA/DETALLE}" editable="true"/> -->
+														   <Input id="inpDetalle" valueState="Error" value="" editable="true"/>
+														</f:fields>
+													</f:FormElement>	
+													
+													
+													
+												</f:formElements>
+											</f:FormContainer>
+										</f:formContainers>
+									</f:Form>
+								</content>
+							</Panel>
+							<beginButton>
+					           <Button text="Guardar" type="Accept" press="aceptarIncidente"/>
+							</beginButton>
+							<endButton>
+								<Button text="Cerrar" press="cerrarIncidente"/>
+							</endButton>
+						</Dialog>
+						<Dialog id="idDialogMaterial" visible="false" state="Success" icon="sap-icon://shipping-status" class="sapContrast sapContrastPlus"
+							title="Material" contentWidth="100%" contentHeight="100%">
+							<Panel width="auto" class="sapUiResponsiveMargin" accessibleRole="Region">
+								<content></content>
+							</Panel>
+							<endButton></endButton>
+						</Dialog>
+					</content>
+					<footer>
+						<Toolbar>
+							<ToolbarSpacer/>
+							<Button text="Limpiar" id="idBtnLimpiar" press="onLimpiar" type="Accept"/>
+							<Button text="Buscar" id="idBtnBuscar" press="onValidaEntrega" type="Accept" enabled="true" busyIndicatorDelay="2000"/>
+						<!--	<Button id="idBtnRepetir" visible="false" press="onRepetir" text="Repetir Demo" icon="sap-icon://refresh" type="Accept"/> -->
+						</Toolbar>
+					</footer>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>
